@@ -1,0 +1,51 @@
+
+
+name: .NET Core Desktop
+
+on:
+  workflow_dispatch
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: 
+          - Release
+        platform:
+          - Any CPU
+
+    env:
+      SOLUTION_FILE_PATH: ShareX.sln
+      
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.1
+    - name: get source
+      run: |
+        git clone https://github.com/ShareX/ShareX.git sharex
+
+    - name: Restore NuGet packages
+      working-directory: ./sharex
+      run: nuget restore "${{ env.SOLUTION_FILE_PATH }}"
+
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: build the application
+      working-directory: ./sharex
+      run: |
+        msbuild -m -p:Configuration="${{ matrix.configuration }}" -p:Platform="${{ matrix.platform }}" "${{ env.SOLUTION_FILE_PATH }}"
+
+
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: sharex
+        path: ./sharex/Output/*
