@@ -24,25 +24,27 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v1.3.2
+      with:
+        msbuild-architecture: x64
     - name: get source
       run: |
         git clone https://github.com/NickeManarin/ScreenToGif.git test
 
     - name: Restore NuGet packages
       working-directory: ./test
-      run: nuget restore "${{ env.SOLUTION_FILE_PATH }}"
+      run: nuget restore ${{ env.SOLUTION_FILE_PATH }}
 
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: build the application
       working-directory: ./test
       run: |
-        msbuild -m -p:Configuration="${{ matrix.configuration }}" -p:Platform="${{ matrix.platform }}" "${{ env.SOLUTION_FILE_PATH }}"
+        msbuild -m -p:Configuration="${{ matrix.configuration }}" -p:Platform="${{ matrix.platform }}" ${{ env.SOLUTION_FILE_PATH }}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
