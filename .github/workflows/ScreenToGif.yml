@@ -9,7 +9,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
- build:
+  build:
 
     strategy:
       matrix:
@@ -28,12 +28,12 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.3.2
+      uses: microsoft/setup-msbuild@v2
       with:
         msbuild-architecture: x64
     - name: get source
       run: |
-        git clone https://github.com/NickeManarin/ScreenToGif.git test
+        git clone --depth=1 https://github.com/NickeManarin/ScreenToGif.git test
 
     - name: Restore NuGet packages
       working-directory: ./test
@@ -53,3 +53,24 @@ jobs:
         path: .\test\ScreenToGif\bin\*
 
 
+  build-dotnet:
+    runs-on: windows-latest
+
+    steps:
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.*'
+
+      - name: get source
+        run: git clone --depth=1 https://github.com/NickeManarin/ScreenToGif.git gif
+
+      - name: Publish
+        working-directory: ./gif
+        run: |
+          dotnet publish GifRecorder.sln -a x64 -c Release -o artifact
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-x64
+          path: ./gif/artifact
